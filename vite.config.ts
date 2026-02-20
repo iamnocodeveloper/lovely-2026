@@ -5,6 +5,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
+  // Use loadEnv (local .env files) first, fall back to process.env (Netlify dashboard)
+  const geminiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
   return {
     base: '/', // Root path for Netlify deployment
     server: {
@@ -16,8 +18,8 @@ export default defineConfig(({ mode }) => {
       tailwindcss()
     ],
     define: {
-      'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+      'process.env.API_KEY': JSON.stringify(geminiKey),
+      'process.env.GEMINI_API_KEY': JSON.stringify(geminiKey)
     },
     resolve: {
       alias: {

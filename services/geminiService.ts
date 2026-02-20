@@ -2,8 +2,9 @@
 import { GoogleGenAI } from "@google/genai";
 import { AppData } from "../types";
 
-// Always use a named parameter object with the API key from process.env.API_KEY.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Only initialize GoogleGenAI if an API key is available
+const apiKey = process.env.API_KEY || '';
+const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 /**
  * Generates a studio analysis report using Gemini.
@@ -11,6 +12,9 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
  */
 export async function generateStudioReport(data: AppData, query: string) {
   try {
+    if (!ai) {
+      return "⚠️ La API Key de Gemini no está configurada. El asistente AI no está disponible en este momento.";
+    }
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
       contents: `Datos del estudio (JSON): ${JSON.stringify(data)}.\n\nConsulta del Usuario: ${query}`,
